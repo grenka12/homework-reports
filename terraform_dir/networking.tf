@@ -1,21 +1,21 @@
-resource "azurerm_private_endpoint" "backend-ep" {
-  name                = "backend-ep"
-  location            = azurerm_resource_group.rg-main.location
-  resource_group_name = azurerm_resource_group.rg-main.name
-  subnet_id           = azurerm_subnet.backend-subnet-ib.id
+# resource "azurerm_private_endpoint" "backend-ep" {
+#   name                = "backend-ep"
+#   location            = azurerm_resource_group.rg-main.location
+#   resource_group_name = azurerm_resource_group.rg-main.name
+#   subnet_id           = azurerm_subnet.backend-subnet-ib.id
 
-  private_service_connection {
-    name                           = "backend-ep-psc"
-    private_connection_resource_id = azurerm_linux_web_app.Backend-webapp.id
-    subresource_names              = ["sites"]
-    is_manual_connection           = false
-  }
+#   private_service_connection {
+#     name                           = "backend-ep-psc"
+#     private_connection_resource_id = azurerm_linux_web_app.Backend-webapp.id
+#     subresource_names              = ["sites"]
+#     is_manual_connection           = false
+#   }
 
-  private_dns_zone_group {
-    name                 = "serviceApp-dns-zg"
-    private_dns_zone_ids = [azurerm_private_dns_zone.serviceApp-dns.id]
-  }
-}
+#   private_dns_zone_group {
+#     name                 = "serviceApp-dns-zg"
+#     private_dns_zone_ids = [azurerm_private_dns_zone.serviceApp-dns.id]
+#   }
+# }
 
 resource "azurerm_private_endpoint" "storage-pe" {
   name                = "storage-pe"
@@ -59,7 +59,7 @@ resource "azurerm_private_endpoint" "sqlServer-pe" {
   name                = "sqlServer-pe"
   location            = azurerm_resource_group.rg-main.location
   resource_group_name = azurerm_resource_group.rg-main.name
-  subnet_id           = azurerm_subnet.keyvault-subnet.id
+  subnet_id           = azurerm_subnet.sqlServer-subnet.id
 
   private_service_connection {
     name                           = "sqlServer-sa-psc"
@@ -74,6 +74,25 @@ resource "azurerm_private_endpoint" "sqlServer-pe" {
   }
 }
 
+resource "azurerm_private_endpoint" "acr-pe" {
+  name                = "acr-pe"
+  location            = azurerm_resource_group.rg-main.location
+  resource_group_name = azurerm_resource_group.rg-main.name
+  subnet_id           = azurerm_subnet.acr-subnet.id
+
+  private_service_connection {
+    name                           = "acr-psc"
+    private_connection_resource_id = azurerm_container_registry.backend-acr.id
+    subresource_names              = ["registry"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "acr-dns-zg"
+    private_dns_zone_ids = [azurerm_private_dns_zone.acr_dns.id]
+  }
+}
+
 
 
 
@@ -84,27 +103,19 @@ resource "azurerm_virtual_network" "backend-vnet" {
   resource_group_name = azurerm_resource_group.rg-main.name
 }
 
-resource "azurerm_subnet" "backend-subnet-ib" {
-  name                 = "backend-subnet-inbound"
-  resource_group_name  = azurerm_resource_group.rg-main.name
-  virtual_network_name = azurerm_virtual_network.backend-vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+# resource "azurerm_subnet" "backend-subnet-ib" {
+#   name                 = "backend-subnet-inbound"
+#   resource_group_name  = azurerm_resource_group.rg-main.name
+#   virtual_network_name = azurerm_virtual_network.backend-vnet.name
+#   address_prefixes     = ["10.0.1.0/24"]
 
-}
+# }
 
 resource "azurerm_subnet" "backend-subnet-ob" {
   name                 = "backend-subnet-outbound"
   resource_group_name  = azurerm_resource_group.rg-main.name
   virtual_network_name = azurerm_virtual_network.backend-vnet.name
-  address_prefixes     = ["10.0.2.0/24"]
-
-  delegation {
-    name = "delegationForAppService[serverFarms]"
-
-    service_delegation {
-      name = "Microsoft.Web/serverFarms"
-    }
-  }
+  address_prefixes     = ["10.0.6.0/23"]
 }
 
 resource "azurerm_subnet" "storage-subnet" {
@@ -126,4 +137,11 @@ resource "azurerm_subnet" "sqlServer-subnet" {
   resource_group_name  = azurerm_resource_group.rg-main.name
   virtual_network_name = azurerm_virtual_network.backend-vnet.name
   address_prefixes     = ["10.0.5.0/24"]
+}
+
+resource "azurerm_subnet" "acr-subnet" {
+  name                 = "acr-subnet"
+  resource_group_name  = azurerm_resource_group.rg-main.name
+  virtual_network_name = azurerm_virtual_network.backend-vnet.name
+  address_prefixes     = ["10.0.8.0/24"]
 }

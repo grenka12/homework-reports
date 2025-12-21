@@ -30,34 +30,69 @@ resource "azurerm_resource_group" "rg-main" {
   name     = "backendrg-main"
   location = "polandcentral"
 }
-
-resource "azurerm_service_plan" "Backend-sp" {
-  name                = "Backend-sp"
-  resource_group_name = azurerm_resource_group.rg-main.name
+resource "azurerm_container_app_environment" "backend-cae" {
+  name                = "backend-cae"
   location            = azurerm_resource_group.rg-main.location
-  os_type             = "Linux"
-  sku_name            = "B3"
+  resource_group_name = azurerm_resource_group.rg-main.name
+
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.main-analytics-workspace.id
+
+  infrastructure_subnet_id = azurerm_subnet.backend-subnet-ob.id
 }
 
-resource "azurerm_linux_web_app" "Backend-webapp" {
-  name                          = var.appservice-name
-  resource_group_name           = azurerm_resource_group.rg-main.name
-  location                      = azurerm_service_plan.Backend-sp.location
-  service_plan_id               = azurerm_service_plan.Backend-sp.id
-  public_network_access_enabled = false
-  virtual_network_subnet_id     = azurerm_subnet.backend-subnet-ob.id
+resource "azurerm_container_app" "backend" {
+  name                         = "backend-capp"
+  container_app_environment_id = azurerm_container_app_environment.backend-cae.id
+  resource_group_name          = azurerm_resource_group.rg-main.name
+  revision_mode                = "Single"
 
-  //logs
-  app_settings = {
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.appinsights.connection_string
+ #whoami
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.backend-mi.id]
   }
 
-  identity {
-  type = "SystemAssigned"
+
+  ingress {
+
+    external_enabled = false
+
+    traffic_weight {
+      percentage      = 100
+      latest_revision = true
+    }
+    target_port = var.backend-ingress-port
+  }
+
+  template {
+  volume {
+    name         = "uploads"
+    storage_name = azurerm_container_app_environment_storage.files.name
+    storage_type = "AzureFile"
+  }
+
+  container {
+    name   = "debug"
+    image  = "${azurerm_container_registry.backend-acr.login_server}/backend:latest"
+    cpu    = 0.5
+    memory = "0.5Gi"
+
+
+    volume_mounts {
+      path  = "/mnt/files"
+      name  = "uploads"
+    }
+  }
 }
 
-  site_config {}
+  #+whoami
+  registry {
+    server   = azurerm_container_registry.backend-acr.login_server
+    identity = azurerm_user_assigned_identity.backend-mi.id
+  }
+
 }
+
 
 //
 
@@ -83,16 +118,25 @@ resource "azurerm_mssql_server" "msql-server" {
   location            = azurerm_resource_group.rg-main.location
   version             = "12.0"
 
+  
   public_network_access_enabled = false
   administrator_login           = var.db-username
   administrator_login_password  = var.db-password
-  
+
   #   azuread_administrator {
   #     azuread_authentication_only = true
   #     login_username = "psql-admin"
   #     object_id = azuread_group.sql_admins.object_id
   #   }
 }
+
+resource "azurerm_mssql_database" "main" {
+  name      = "bestrongdb"
+  server_id = azurerm_mssql_server.msql-server.id
+  storage_account_type = "Local"
+
+}
+
 
 
 resource "azurerm_storage_account" "storage" {
@@ -109,4 +153,14 @@ resource "azurerm_storage_share" "name" {
   name               = "main-fileshare-bestrongstorage"
   storage_account_id = azurerm_storage_account.storage.id
   quota              = 100
+}
+
+resource "azurerm_container_app_environment_storage" "files" {
+  name                         = "fileshare"
+  access_mode = "ReadWrite"
+  container_app_environment_id = azurerm_container_app_environment.backend-cae.id
+
+  account_name = azurerm_storage_account.storage.name
+  share_name   = azurerm_storage_share.name.name
+  access_key   = azurerm_storage_account.storage.primary_access_key
 }
