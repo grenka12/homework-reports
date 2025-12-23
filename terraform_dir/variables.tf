@@ -2,6 +2,10 @@ variable "keyvault-name" {
   type = string
 }
 
+variable "db-name" {
+  type = string
+}
+
 
 variable "db-username" {
   type = string
@@ -9,6 +13,7 @@ variable "db-username" {
 
 variable "db-password" {
   type = string
+  sensitive = true
 }
 
 variable "backend-ingress-port" {

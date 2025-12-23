@@ -18,6 +18,7 @@ terraform {
   }
 }
 
+
 provider "azurerm" {
   features {}
 
@@ -30,6 +31,8 @@ resource "azurerm_resource_group" "rg-main" {
   name     = "backendrg-main"
   location = "polandcentral"
 }
+
+// 2.
 resource "azurerm_container_app_environment" "backend-cae" {
   name                = "backend-cae"
   location            = azurerm_resource_group.rg-main.location
@@ -39,7 +42,7 @@ resource "azurerm_container_app_environment" "backend-cae" {
 
   infrastructure_subnet_id = azurerm_subnet.backend-subnet-ob.id
 }
-
+// 1.
 resource "azurerm_container_app" "backend" {
   name                         = "backend-capp"
   container_app_environment_id = azurerm_container_app_environment.backend-cae.id
@@ -72,9 +75,9 @@ resource "azurerm_container_app" "backend" {
   }
 
   container {
-    name   = "debug"
+    name   = "realease"
     image  = "${azurerm_container_registry.backend-acr.login_server}/backend:latest"
-    cpu    = 0.5
+    cpu    = 0.25
     memory = "0.5Gi"
 
 
@@ -85,7 +88,6 @@ resource "azurerm_container_app" "backend" {
   }
 }
 
-  #+whoami
   registry {
     server   = azurerm_container_registry.backend-acr.login_server
     identity = azurerm_user_assigned_identity.backend-mi.id
@@ -118,20 +120,14 @@ resource "azurerm_mssql_server" "msql-server" {
   location            = azurerm_resource_group.rg-main.location
   version             = "12.0"
 
-  
   public_network_access_enabled = false
   administrator_login           = var.db-username
   administrator_login_password  = var.db-password
 
-  #   azuread_administrator {
-  #     azuread_authentication_only = true
-  #     login_username = "psql-admin"
-  #     object_id = azuread_group.sql_admins.object_id
-  #   }
 }
 
 resource "azurerm_mssql_database" "main" {
-  name      = "bestrongdb"
+  name      = var.db-name
   server_id = azurerm_mssql_server.msql-server.id
   storage_account_type = "Local"
 
