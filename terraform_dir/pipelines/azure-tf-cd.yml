@@ -1,0 +1,18 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: '1.13.3'
+- script: terraform init
+  workingDirectory: terraform_dir
+
+- script: terraform validate
+  workingDirectory: terraform_dir
+
+- script: terraform apply -auto-approve
+  workingDirectory: terraform_dir
