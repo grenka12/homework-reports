@@ -16,6 +16,8 @@ steps:
     terraformVersion: '1.13.3'
 - script: terraform init
   workingDirectory: terraform_dir
+  env:
+    ARM_USE_AZURECLI_AUTH: true
 
 - script: terraform validate
   workingDirectory: terraform_dir
