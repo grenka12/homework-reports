@@ -8,8 +8,6 @@ steps:
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: '1.13.3'
-- script: terraform init
-  workingDirectory: terraform_dir
 
 - task: TerraformTask@5
   inputs:
