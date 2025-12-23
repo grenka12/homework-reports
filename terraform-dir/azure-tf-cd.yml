@@ -5,10 +5,14 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: cd terraform-dir
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: '1.13.3'
 - script: terraform init
+  workingDirectory: terraform-dir
+
 - script: terraform validate
+  workingDirectory: terraform-dir
+
 - script: terraform apply -auto-approve
+  workingDirectory: terraform-dir
