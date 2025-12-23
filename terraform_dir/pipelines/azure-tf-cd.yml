@@ -5,6 +5,12 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Azure for Students(9eb5184c-5f9e-4785-99c3-744581f619cf)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az account show'
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: '1.13.3'
