@@ -11,7 +11,7 @@ variable "db-username" {
   type = string
 }
 
-variable "db-password" {
+variable "db_password" {
   type = string
   sensitive = true
 }

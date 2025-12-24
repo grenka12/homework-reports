@@ -113,10 +113,10 @@ resource "azurerm_key_vault" "main-keyvault" {
   public_network_access_enabled = false
 }
 
-data "azurerm_key_vault_secret" "db_password" {
-  name         = "db-password"
-  key_vault_id = azurerm_key_vault.main-keyvault.id
-}
+# data "azurerm_key_vault_secret" "db_password" {
+#   name         = "db-password"
+#   key_vault_id = azurerm_key_vault.main-keyvault.id
+# }
 
 
 resource "azurerm_mssql_server" "msql-server" {
@@ -127,7 +127,7 @@ resource "azurerm_mssql_server" "msql-server" {
 
   public_network_access_enabled = false
   administrator_login           = var.db-username
-  administrator_login_password  = var.db-password #data.azurerm_key_vault_secret.db_password.value
+  administrator_login_password  = var.db_password #data.azurerm_key_vault_secret.db_password.value
 
 }
 
