@@ -1,6 +1,10 @@
 trigger:
 - main
 
+variables:
+  TF_LOG: INFO
+  TF_LOG_PATH: terraform.log
+
 pool:
   vmImage: ubuntu-latest
 
