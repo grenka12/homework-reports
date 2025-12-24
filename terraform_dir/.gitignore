@@ -3,4 +3,4 @@
 *.txt
 
 *.tfstate
-*.tfvars
+*secret.tfvars
