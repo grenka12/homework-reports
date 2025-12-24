@@ -7,6 +7,8 @@ variables:
 
 pool:
   vmImage: ubuntu-latest
+  demands:
+  - Agent.Name -equals 	mac-ubuntu
 
 steps:
 - task: TerraformInstaller@1
