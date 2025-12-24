@@ -2,16 +2,16 @@ trigger:
 - main
 
 variables:
-  TF_LOG: INFO
+  TF_LOG: TRACE
   TF_LOG_PATH: terraform.log
 
 pool:
   name: Default
-  vmImage: ubuntu-latest
   demands:
   - Agent.Name -equals 	mac-ubuntu
 
 steps:
+- checkout: self
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: '1.13.3'
@@ -32,6 +32,7 @@ steps:
     backendAzureRmStorageAccountName: 'bestrongtfstate1'
     backendAzureRmContainerName: 'tfstate'
     backendAzureRmKey: 'prod.terraform.tfstate'
+    commandOptions: "-input=false"
 
 - task: TerraformTask@5
   inputs:
@@ -45,5 +46,7 @@ steps:
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform_dir'
     environmentServiceNameAzureRM: 'Azure for Students(9eb5184c-5f9e-4785-99c3-744581f619cf)'
+    commandOptions: "-parallelism=1 -input=false -lock-timeout=10m"
+
   env:
     TF_VAR_db_password: $(db_password)
