@@ -13,8 +13,8 @@ steps:
   inputs:
     azureSubscription: 'Azure for Students(9eb5184c-5f9e-4785-99c3-744581f619cf)'
     KeyVaultName: 'bestrong-keyvault-3'
-    SecretsFilter: 'db-password'
-    RunAsPreJob: false
+    SecretsFilter: 'db_password'
+    RunAsPreJob: true
 
 - task: TerraformTask@5
   inputs:
@@ -39,4 +39,4 @@ steps:
     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform_dir'
     environmentServiceNameAzureRM: 'Azure for Students(9eb5184c-5f9e-4785-99c3-744581f619cf)'
   env:
-    TF_VAR_db_password: $(db-password)
+    TF_VAR_db_password: $(db_password)
