@@ -6,6 +6,7 @@ variables:
   TF_LOG_PATH: terraform.log
 
 pool:
+  name: Default
   vmImage: ubuntu-latest
   demands:
   - Agent.Name -equals 	mac-ubuntu
