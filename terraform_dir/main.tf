@@ -110,7 +110,7 @@ resource "azurerm_key_vault" "main-keyvault" {
   sku_name            = "standard"
   tenant_id           = data.azurerm_client_config.current.tenant_id
 
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 }
 
 # data "azurerm_key_vault_secret" "db_password" {
