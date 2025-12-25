@@ -1,0 +1,39 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  name: Default
+
+steps:
+- checkout: self
+
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: '1.13.3'
+
+- task: TerraformTask@5
+  displayName: terraform init
+  inputs:
+    provider: azurerm
+    command: init
+    workingDirectory: terraform_dir
+    commandOptions: -input=false -lock=false
+
+- task: TerraformTask@5
+  displayName: terraform validate
+  inputs:
+    provider: azurerm
+    command: validate
+    workingDirectory: terraform_dir
+
+- task: TerraformTask@5
+  displayName: terraform plan
+  inputs:
+    provider: azurerm
+    command: plan
+    workingDirectory: terraform_dir
+    commandOptions: -input=false -lock=false
