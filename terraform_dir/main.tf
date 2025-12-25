@@ -131,6 +131,7 @@ resource "azurerm_mssql_server" "msql-server" {
 
 }
 
+
 resource "azurerm_mssql_database" "main" {
   name      = var.db-name
   server_id = azurerm_mssql_server.msql-server.id
