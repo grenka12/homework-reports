@@ -141,6 +141,7 @@ resource "azurerm_mssql_database" "main" {
 
 
 
+
 resource "azurerm_storage_account" "storage" {
   name                     = "bestrongstorage1"
   resource_group_name      = azurerm_resource_group.rg-main.name
