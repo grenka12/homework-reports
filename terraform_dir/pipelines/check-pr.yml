@@ -21,7 +21,7 @@ steps:
     provider: azurerm
     command: init
     workingDirectory: terraform_dir
-    commandOptions: -input=false -lock=false
+    commandOptions: -input=false -backend=false
 
 - task: TerraformTask@5
   displayName: terraform validate
@@ -36,4 +36,4 @@ steps:
     provider: azurerm
     command: plan
     workingDirectory: terraform_dir
-    commandOptions: -input=false -lock=false
+    commandOptions: -input=false -lock=false -refresh=false
