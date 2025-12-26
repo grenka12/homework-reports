@@ -153,7 +153,7 @@ resource "azurerm_storage_account" "storage" {
 resource "azurerm_storage_share" "name" {
   name               = "main-fileshare-bestrongstorage"
   storage_account_id = azurerm_storage_account.storage.id
-  quota              = 110
+  quota              = 120
 }
 
 resource "azurerm_container_app_environment_storage" "files" {
