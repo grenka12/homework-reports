@@ -5,3 +5,6 @@
 
 ## Тиждень 5
 [Loom video](https://youtu.be/tEMb3o8n27s) - інфрастуктура на Azure через Terraform для BeStrong
+
+## Тиждень 6
+[Loom video](https://youtu.be/7TtSO0OknZ8) - Azure Devops Pipelines task (CI/CD: check pr and deploy)
