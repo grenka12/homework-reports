@@ -120,6 +120,10 @@ resource "azurerm_key_vault" "main-keyvault" {
 
 
 resource "azurerm_mssql_server" "msql-server" {
+  depends_on = [ 
+    azurerm_container_app.backend 
+  ]
+
   name                = "mssql-db-server-1"
   resource_group_name = azurerm_resource_group.rg-main.name
   location            = azurerm_resource_group.rg-main.location
@@ -131,6 +135,10 @@ resource "azurerm_mssql_server" "msql-server" {
 
 }
 
+output "web_ips" {
+  value = azurerm_linux_virtual_machine.web[*].public_ip_address
+}
+
 
 resource "azurerm_mssql_database" "main" {
   name      = var.db-name
@@ -138,9 +146,6 @@ resource "azurerm_mssql_database" "main" {
   storage_account_type = "Local"
 
 }
-
-#20
-
 
 
 resource "azurerm_storage_account" "storage" {
@@ -156,7 +161,7 @@ resource "azurerm_storage_account" "storage" {
 resource "azurerm_storage_share" "name" {
   name               = "main-fileshare-bestrongstorage"
   storage_account_id = azurerm_storage_account.storage.id
-  quota              = 100
+  quota              = 110
 }
 
 resource "azurerm_container_app_environment_storage" "files" {

@@ -40,3 +40,9 @@ resource "azurerm_user_assigned_identity" "backend-mi" {
 #   role_definition_name = "Storage File Data SMB Share Contributor"
 #   principal_id         = azurerm_user_assigned_identity.backend-mi.principal_id
 # }
+
+
+resource "azurerm_resource_group" "rg" {
+  name     = "rg-demo"
+  location = "westeurope"
+}
