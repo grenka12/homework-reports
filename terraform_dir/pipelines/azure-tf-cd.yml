@@ -8,9 +8,7 @@ variables:
   TF_LOG_PATH: terraform.log
 
 pool:
-  name: Default
-  demands:
-  - Agent.Name -equals 	mac-ubuntu
+  vmImage: ubuntu-latest
 
 steps:
 - checkout: self
