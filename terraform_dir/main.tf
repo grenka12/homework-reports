@@ -131,13 +131,13 @@ resource "azurerm_mssql_server" "msql-server" {
 
 }
 
+
 resource "azurerm_mssql_database" "main" {
   name      = var.db-name
   server_id = azurerm_mssql_server.msql-server.id
   storage_account_type = "Local"
 
 }
-
 
 
 resource "azurerm_storage_account" "storage" {
@@ -153,7 +153,7 @@ resource "azurerm_storage_account" "storage" {
 resource "azurerm_storage_share" "name" {
   name               = "main-fileshare-bestrongstorage"
   storage_account_id = azurerm_storage_account.storage.id
-  quota              = 100
+  quota              = 110
 }
 
 resource "azurerm_container_app_environment_storage" "files" {
