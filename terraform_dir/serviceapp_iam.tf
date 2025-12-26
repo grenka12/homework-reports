@@ -41,8 +41,3 @@ resource "azurerm_user_assigned_identity" "backend-mi" {
 #   principal_id         = azurerm_user_assigned_identity.backend-mi.principal_id
 # }
 
-
-resource "azurerm_resource_group" "rg" {
-  name     = "rg-demo"
-  location = "westeurope"
-}

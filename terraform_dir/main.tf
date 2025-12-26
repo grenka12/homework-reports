@@ -120,10 +120,6 @@ resource "azurerm_key_vault" "main-keyvault" {
 
 
 resource "azurerm_mssql_server" "msql-server" {
-  depends_on = [ 
-    azurerm_container_app.backend 
-  ]
-
   name                = "mssql-db-server-1"
   resource_group_name = azurerm_resource_group.rg-main.name
   location            = azurerm_resource_group.rg-main.location
@@ -133,10 +129,6 @@ resource "azurerm_mssql_server" "msql-server" {
   administrator_login           = var.db-username
   administrator_login_password  = var.db_password #data.azurerm_key_vault_secret.db_password.value
 
-}
-
-output "web_ips" {
-  value = azurerm_linux_virtual_machine.web[*].public_ip_address
 }
 
 
